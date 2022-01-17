@@ -1,0 +1,56 @@
+﻿<Window x:Class="XiangqiGame.WindowNew"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:XiangqiGame"
+        mc:Ignorable="d"
+        Title="WindowNew" Height="590" Width="820">
+
+    <StackPanel >
+        <TextBlock Text="Xiangqi Game" FontSize="40" HorizontalAlignment="Center"/>
+        <StackPanel Orientation="Horizontal" Width="886">
+
+            <Grid x:Name="GameBoardGrid" Width="390" Height="430" Margin="20,20,175,15">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="40*"/>
+                    <ColumnDefinition Width="40*"/>
+                    <ColumnDefinition Width="40*"/>
+                    <ColumnDefinition Width="40*"/>
+                    <ColumnDefinition Width="40*"/>
+                    <ColumnDefinition Width="40*" />
+                    <ColumnDefinition Width="40*"/>
+                    <ColumnDefinition Width="40*"/>
+                    <ColumnDefinition Width="40*"/>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="40*"/>
+                    <RowDefinition Height="40*"/>
+                    <RowDefinition Height="40*"/>
+                    <RowDefinition Height="40*"/>
+                    <RowDefinition Height="40*"/>
+                    <RowDefinition Height="40*"/>
+                    <RowDefinition Height="40*"/>
+                    <RowDefinition Height="40*"/>
+                    <RowDefinition Height="40*"/>
+                    <RowDefinition Height="40*"/>
+                </Grid.RowDefinitions>
+            </Grid>
+            <StackPanel Orientation="Vertical">
+
+                <TextBlock x:Name="state"
+                       FontSize="20"
+                       Text="Current state: select " Margin="-100,100,0,-102" FontStyle="Italic"/>
+                <TextBlock x:Name="side"
+                       FontSize="20"
+                       Text="Current side：red" Margin="-100,50,0,0" FontStyle="Italic"/>
+                <Button
+                    Content="Exit Game" Margin="115 360 0 0"
+                    Height="30" Width="90"
+                    FontSize="10" Foreground="Black"
+                    Background="SlateGray"
+                    Click="Button_Click_1"/>
+            </StackPanel>
+        </StackPanel>
+    </StackPanel>
+    </Window>
