@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -56,11 +56,8 @@ namespace XiangqiGame
         private void Close_Click(object sender, RoutedEventArgs e)
 
         {
-
             MessageBoxResult result = MessageBox.Show("Are you sure to quit the game?", "Exit", MessageBoxButton.YesNo, MessageBoxImage.Question);
-
             if (result == MessageBoxResult.Yes)
-
             {
                 Application.Current.MainWindow.Close();
             }
@@ -76,8 +73,6 @@ namespace XiangqiGame
         {
             _sound.SoundLocation = "Sounds/happy1.wav";
             _sound.Play();
-            
         }
     }
 }
-
