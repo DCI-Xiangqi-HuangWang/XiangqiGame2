@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Windows;
 using System.Drawing;
@@ -6,6 +6,12 @@ using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Media;
+using System.Collections.Generic;
+using System.Timers;
+using System.Threading;
+using System.Windows.Threading;
+using Timer = System.Timers.Timer;
+using System.Diagnostics;
 
 namespace XiangqiGame
 {
@@ -18,14 +24,33 @@ namespace XiangqiGame
         GameBoard board = new GameBoard(); //已经给所有棋子赋值，初始化成功
         chesspiece[,] chesspiece = new chesspiece[10, 9];
         display show = new display();
+        int min = 0, sec = 0;
 
         public WindowNew()
         {
             InitializeComponent();
             CreateGrid();
             RedrawGrid();
-            
+
+            DispatcherTimer timer = new DispatcherTimer();
+            timer.Interval = new TimeSpan(0, 0, 1);
+            timer.Tick += timer_Tick;
+            timer.IsEnabled = true;
+
         }
+        //显示游戏进行时间
+        public void timer_Tick(object sender, EventArgs e)
+        {
+            sec++;
+            
+            if (sec > 60)
+            {
+                min++;
+                sec = 0;
+            }
+            Timer1.Text = "Game time: "+min + " : " + sec;
+        }
+
         //依赖象棋的行列，此依赖属性用来储存Button的值，依赖宿主的类型是default(int)
         public static readonly DependencyProperty XQRowProperty = DependencyProperty.Register("XQRow",
                 typeof(int),
@@ -51,11 +76,6 @@ namespace XiangqiGame
             PlayClickSound();
         }
 
-
-        Button storedButton = new Button();
-        //chesspiece piece;
-        int count = 0;
-
         public static SoundPlayer _sound = new SoundPlayer();
 
         public static void PlayClickSound()
@@ -64,8 +84,13 @@ namespace XiangqiGame
             _sound.Play();
         }
 
-
+        Button storedButton = new Button();
+        //chesspiece piece;
+        int count = 0;
+        //int stepcount = -1;
+        
         ArrayList list = new ArrayList();
+       
         private void HandleButton(Button button)
         {
             chesspiece = board.getBoard();
@@ -75,10 +100,14 @@ namespace XiangqiGame
                 bool round = show.currentRound(board, (int)button.GetValue(XQRowProperty), (int)button.GetValue(XQColProperty), turn);
                 if (round)
                 {
-                    //MessageBox.Show("当前状态是Select");
                     board.changeGameState();
                     board.Selectedpiece(button);
+                   // MessageBox.Show("" + button.Name);
+                    board.StoredButton(button);
+
                     storedButton = button;
+                    //stepcount++;
+
                     list = MoveHint();
                 }
                 //选择棋子完后GameState => Move
@@ -96,19 +125,24 @@ namespace XiangqiGame
                     removeHint((int)button.GetValue(XQRowProperty), (int)button.GetValue(XQColProperty));
                     board.changePlayer();
                     board.movePiece();
+                   // MessageBox.Show("" + button.Name);
+                    board.StoredButton(button);
+                    //stepcount++;
+                    //MessageBox.Show("" + stepcount);
                     button.Background = storedButton.Background;
                     storedButton.Background = null;
                     show.isWine(board);
+                    
                 }
                 else
                 {
                     MessageBox.Show("Please follow rules!");
+                    removeHint((int)button.GetValue(XQRowProperty), (int)button.GetValue(XQColProperty));
                 }
                 //GameState => Select
             }
             state.Text = "Current state: " + board.getGameState().ToString();
             side.Text = "Current side: " + board.getPlayer().ToString();
-
         }
 
         public void CreateGrid() //创建一个网格对应棋盘
@@ -183,7 +217,6 @@ namespace XiangqiGame
                     button.Background = new SolidColorBrush(Colors.Blue);
                 }
             }
-
             return myList;
         }
         //去掉高光提示
@@ -223,6 +256,62 @@ namespace XiangqiGame
             {
                 return;
             }
+        }
+
+        List<Button> buttons = new List<Button>();
+
+        public void comeBackStep()
+        {
+            buttons = board.getButtons();
+            int num = -1;
+            foreach(Button button in buttons)
+            {
+                num++;
+            }
+           // MessageBox.Show("" + buttons[1].Name);
+            //起始位置
+           //Button lastbutton = buttons[buttons.Count];
+            //MessageBox.Show(lastbutton.Name.ToString());
+            int selectedX = (int)buttons[num].GetValue(XQRowProperty);
+            int selectedY = (int)buttons[num].GetValue(XQColProperty);
+            //MessageBox.Show("最后一个按钮位置为：" + selectedX + " " + selectedY);
+            //目的地
+           // Button destbutton = buttons[buttons.Count - 1];
+            int destX = (int)buttons[num-1].GetValue(XQRowProperty);
+            int destY = (int)buttons[num-1].GetValue(XQColProperty);
+            //MessageBox.Show("倒数第二个按钮位置为：" + destX + " " + destY);
+
+            chesspiece = board.getBoard();
+            chesspiece load = new blank(XiangqiGame.chesspiece.Player_side.blank, selectedX, selectedY);
+
+            chesspiece[selectedX, selectedY].setX(destX);
+            chesspiece[selectedX, selectedY].setY(destY);
+            chesspiece[destX, destY] = chesspiece[selectedX, selectedY];
+            chesspiece[selectedX, selectedY] = load;
+
+            //MessageBox.Show("最后一个按钮种类为：" + board.getBoard()[selectedX, selectedY].getType().ToString());
+            //MessageBox.Show("倒数第二个按钮种类为：" + board.getBoard()[destX, destY].getType().ToString());
+
+            buttons[num-1].Background = buttons[num].Background;
+            buttons[num].Background = null;
+            //board.clean();
+            //MessageBox.Show("" + buttons.Count.ToString());
+            count--;
+            board.changePlayer();
+            state.Text = "Current state: " + board.getGameState().ToString();
+            side.Text = "Current side: " + board.getPlayer().ToString();
+        }
+
+        private void Button_Click_2(object sender, RoutedEventArgs e)
+        {
+            //MessageBox.Show("click2");
+            //List<Button> buttons = new List<Button>();
+            buttons = board.getButtons();
+            //MessageBox.Show(buttons.Count.ToString());
+           // if (buttons.Count >= 1 && buttons.Count % 2 != 0)
+           // {
+                comeBackStep();
+            //}
         }
     }
 
