@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -70,6 +70,28 @@ namespace XiangqiGame
         }
 
         public bool[,] ValidMove = new bool[10,9];
+        //List<Button> boardList = new List<Button>();
+        List<Button> buttons = new List<Button>();
+
+        public void StoredButton(Button button)
+        {
+           // List<Button> buttons = new List<Button>();
+           // boardList = buttons;
+            buttons.Add(button);
+            //for (int i = 0; i <buttons.Count; i++)
+            //{
+             // MessageBox.Show(" " + button.Name);
+            //}
+            // MessageBox.Show("添加了一个按钮");
+
+        }
+        public List<Button> getButtons()
+        {
+            //MessageBox.Show("" + buttons[0].Name);
+           // MessageBox.Show("" + buttons[1].Name);
+
+            return buttons;
+        }
 
         public GameBoard()//给棋盘所有棋子赋值,初始化游戏棋盘
         {
@@ -141,19 +163,6 @@ namespace XiangqiGame
             //MessageBox.Show("这里是目的地！");
         }
 
-        ArrayList nameList = new ArrayList();
-        public void storeName(string name)
-        {
-            //ArrayList nameList = new ArrayList();
-            nameList.Add(name);
-            //MessageBox.Show("Name: "+ nameList[0]);
-        }
-        public ArrayList getNameList()
-        {
-            return nameList;
-        }
-
-        
 
         public void movePiece()
         {
